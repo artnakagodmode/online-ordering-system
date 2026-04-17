@@ -199,7 +199,12 @@
 </div>
 
 <script>
-  
+  // ── ADMIN ACCOUNTS ──
+  const ADMINS = [
+    { username: 'admin', password: 'ofosystem', name: 'OFO Admin', role: 'admin' },
+    { username: 'Admin', password: 'channy',    name: 'Channy',    role: 'admin' },
+  ];
+
   // ── HELPERS ──
   function showError(msg) {
     document.getElementById('errorText').textContent = msg;
