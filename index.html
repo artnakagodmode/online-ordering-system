@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FeastFlow — Sign In</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  body { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: var(--bg); }
+
+  /* Background grid pattern */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(255,107,53,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .login-wrap {
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: 1fr 1fr;
+    width: 100%; max-width: 900px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 28px; overflow: hidden;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.6);
+    animation: slideModal 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @media (max-width: 700px) { .login-wrap { grid-template-columns: 1fr; } .login-brand { display: none; } }
+
+  /* Left Brand Panel */
+  .login-brand {
+    background: linear-gradient(145deg, #1a0f08, #2d1a0e);
+    padding: 48px 40px; display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden;
+  }
+  .login-brand::before {
+    content: '🍽️';
+    position: absolute; font-size: 220px; opacity: 0.07;
+    bottom: -20px; right: -30px; transform: rotate(-15deg);
+    pointer-events: none;
+  }
+  .brand-logo { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; }
+  .brand-logo span { color: var(--accent); }
+  .brand-tagline { font-size: 32px; font-weight: 800; font-family: 'Syne', sans-serif; line-height: 1.2; margin-bottom: 12px; }
+  .brand-tagline em { color: var(--accent); font-style: normal; }
+  .brand-desc { font-size: 14px; color: var(--text2); line-height: 1.7; }
+  .brand-stats { display: flex; flex-direction: column; gap: 16px; }
+  .brand-stat { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.04); border-radius: 12px; padding: 14px; border: 1px solid var(--border); }
+  .brand-stat-icon { font-size: 22px; }
+  .brand-stat-num { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; }
+  .brand-stat-label { font-size: 12px; color: var(--text2); }
+
+  /* Right Form Panel */
+  .login-form-panel { padding: 48px 40px; background: var(--card); }
+  .login-welcome { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+  .login-sub { color: var(--text2); font-size: 14px; margin-bottom: 32px; line-height: 1.5; }
+
+  /* Tabs */
+  .auth-tabs { display: flex; background: var(--bg3); border-radius: 12px; padding: 4px; gap: 4px; margin-bottom: 28px; }
+  .auth-tab { flex: 1; padding: 10px; border-radius: 9px; text-align: center; cursor: pointer; font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px; transition: all 0.2s; color: var(--text2); border: none; background: transparent; }
+  .auth-tab.active { background: var(--bg); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+
+  /* Social Btns */
+  .social-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background: var(--bg3); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); font-weight: 500; cursor: pointer; transition: all 0.2s; font-size: 14px; font-family: 'DM Sans', sans-serif; }
+  .social-btn:hover { border-color: var(--accent); }
+
+  /* Password Eye */
+  .pass-wrap { position: relative; }
+  .pass-eye { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; color: var(--text2); transition: color 0.2s; border: none; background: none; }
+  .pass-eye:hover { color: var(--text); }
+
+  /* Error */
+  .error-msg { background: rgba(255,77,109,0.12); border: 1px solid rgba(255,77,109,0.3); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--danger); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+
+  /* Admin hint */
+  .hint-box { background: rgba(255,209,102,0.08); border: 1px solid rgba(255,209,102,0.2); border-radius: 10px; padding: 12px 14px; font-size: 12px; color: var(--text2); margin-top: 16px; line-height: 1.6; }
+  .hint-box strong { color: var(--accent2); }
+</style>
+</head>
+<body>
+<div class="login-wrap">
+
+  <!-- ── LEFT BRAND PANEL ── -->
+  <div class="login-brand">
+    <div>
+      <div class="brand-logo">Feast<span>Flow</span></div>
+      <div style="margin-top:40px;">
+        <div class="brand-tagline">Food, <em>delivered</em> with love.</div>
+        <p class="brand-desc">Order from hundreds of restaurants. Fast delivery, real-time tracking, and a checkout built for speed.</p>
+      </div>
+    </div>
+    <div class="brand-stats">
+      <div class="brand-stat">
+        <div class="brand-stat-icon">🚀</div>
+        <div><div class="brand-stat-num">28 min</div><div class="brand-stat-label">Average delivery time</div></div>
+      </div>
+      <div class="brand-stat">
+        <div class="brand-stat-icon">🍔</div>
+        <div><div class="brand-stat-num">500+</div><div class="brand-stat-label">Menu items available</div></div>
+      </div>
+      <div class="brand-stat">
+        <div class="brand-stat-icon">⭐</div>
+        <div><div class="brand-stat-num">4.9 / 5</div><div class="brand-stat-label">Customer satisfaction</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RIGHT FORM PANEL ── -->
+  <div class="login-form-panel">
+    <div class="login-welcome">Welcome back 👋</div>
+    <p class="login-sub">Sign in to your account or create a new one to start ordering.</p>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Sign In</button>
+      <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">Create Account</button>
+    </div>
+
+    <!-- ERROR BOX -->
+    <div class="error-msg hidden" id="errorBox">
+      <span>⚠️</span><span id="errorText">Invalid credentials</span>
+    </div>
+
+    <!-- ── LOGIN FORM ── -->
+    <div id="loginForm">
+      <div class="form-group">
+        <label class="label">Username or Email</label>
+        <input class="input" type="text" id="loginUser" placeholder="admin / your email" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label class="label">Password</label>
+        <div class="pass-wrap">
+          <input class="input" type="password" id="loginPass" placeholder="Enter your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+          <button class="pass-eye" onclick="togglePass('loginPass',this)" type="button">👁️</button>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:-10px;margin-bottom:20px;">
+        <span style="font-size:13px;color:var(--accent);cursor:pointer;">Forgot password?</span>
+      </div>
+      <button class="btn btn-primary btn-full btn-lg" onclick="doLogin()" id="loginBtn">
+        Sign In to FeastFlow
+      </button>
+      <div class="or-divider">or continue as client with</div>
+      <div style="display:flex;gap:10px;">
+        <button class="social-btn" onclick="socialSignIn('Google')">🔍 Google</button>
+        <button class="social-btn" onclick="socialSignIn('Facebook')">📘 Facebook</button>
+      </div>
+      <div class="hint-box">
+        <strong>Admin logins:</strong><br>
+        Username: <strong>admin</strong> / Password: <strong>ofosystem</strong><br>
+        Username: <strong>Admin</strong> / Password: <strong>channy</strong><br>
+        <span style="margin-top:4px;display:block;">Client: any email + any password (8+ chars)</span>
+      </div>
+    </div>
+
+    <!-- ── REGISTER FORM ── -->
+    <div id="registerForm" class="hidden">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="label">First Name</label>
+          <input class="input" type="text" id="regFirst" placeholder="Juan">
+        </div>
+        <div class="form-group">
+          <label class="label">Last Name</label>
+          <input class="input" type="text" id="regLast" placeholder="dela Cruz">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="label">Email Address</label>
+        <input class="input" type="email" id="regEmail" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label class="label">Phone Number</label>
+        <input class="input" type="tel" id="regPhone" placeholder="+63 900 000 0000">
+      </div>
+      <div class="form-group">
+        <label class="label">Password</label>
+        <div class="pass-wrap">
+          <input class="input" type="password" id="regPass" placeholder="Min. 8 characters" autocomplete="new-password">
+          <button class="pass-eye" onclick="togglePass('regPass',this)" type="button">👁️</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="label">Confirm Password</label>
+        <input class="input" type="password" id="regPass2" placeholder="Repeat password">
+      </div>
+      <button class="btn btn-primary btn-full btn-lg" onclick="doRegister()">Create My Account</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  
+  // ── HELPERS ──
+  function showError(msg) {
+    document.getElementById('errorText').textContent = msg;
+    document.getElementById('errorBox').classList.remove('hidden');
+  }
+  function hideError() {
+    document.getElementById('errorBox').classList.add('hidden');
+  }
+  function togglePass(id, btn) {
+    const inp = document.getElementById(id);
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+    else { inp.type = 'password'; btn.textContent = '👁️'; }
+  }
+  function switchTab(tab) {
+    hideError();
+    document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+    document.getElementById('registerForm').classList.toggle('hidden', tab !== 'register');
+    document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+    document.getElementById('tabRegister').classList.toggle('active', tab !== 'login');
+  }
+
+  // ── LOGIN ──
+  function doLogin() {
+    hideError();
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    if (!user || !pass) { showError('Please fill in username and password.'); return; }
+
+    // Check admin
+    const admin = ADMINS.find(a => a.username === user && a.password === pass);
+    if (admin) {
+      sessionStorage.setItem('ff_session', JSON.stringify({ ...admin, loggedIn: true }));
+      setLoading(true);
+      setTimeout(() => { window.location.href = 'admin.html'; }, 600);
+      return;
+    }
+
+    // Check existing client account
+    const accounts = JSON.parse(localStorage.getItem('ff_accounts') || '[]');
+    const client = accounts.find(a => (a.email === user || a.username === user) && a.password === pass);
+    if (client) {
+      sessionStorage.setItem('ff_session', JSON.stringify({ ...client, role: 'client', loggedIn: true }));
+      setLoading(true);
+      setTimeout(() => { window.location.href = 'client.html'; }, 600);
+      return;
+    }
+
+    showError('Invalid username or password. Please try again.');
+  }
+
+  // ── REGISTER ──
+  function doRegister() {
+    hideError();
+    const first = document.getElementById('regFirst').value.trim();
+    const last  = document.getElementById('regLast').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const phone = document.getElementById('regPhone').value.trim();
+    const pass  = document.getElementById('regPass').value;
+    const pass2 = document.getElementById('regPass2').value;
+
+    if (!first || !last || !email || !pass) { showError('Please fill in all required fields.'); return; }
+    if (pass.length < 8) { showError('Password must be at least 8 characters.'); return; }
+    if (pass !== pass2)  { showError('Passwords do not match.'); return; }
+
+    const accounts = JSON.parse(localStorage.getItem('ff_accounts') || '[]');
+    if (accounts.find(a => a.email === email)) { showError('An account with this email already exists.'); return; }
+
+    const newUser = { name: `${first} ${last}`, email, phone, password: pass, username: email, role: 'client' };
+    accounts.push(newUser);
+    localStorage.setItem('ff_accounts', JSON.stringify(accounts));
+
+    sessionStorage.setItem('ff_session', JSON.stringify({ ...newUser, loggedIn: true }));
+    setLoading(true);
+    setTimeout(() => { window.location.href = 'client.html'; }, 600);
+  }
+
+  // ── SOCIAL ──
+  function socialSignIn(provider) {
+    const user = { name: `${provider} User`, email: `user@${provider.toLowerCase()}.com`, phone: '', role: 'client', loggedIn: true };
+    sessionStorage.setItem('ff_session', JSON.stringify(user));
+    setLoading(true);
+    setTimeout(() => { window.location.href = 'client.html'; }, 600);
+  }
+
+  function setLoading(on) {
+    const btn = document.getElementById('loginBtn');
+    if (on) { btn.textContent = '⏳ Signing in...'; btn.disabled = true; }
+    else    { btn.textContent = 'Sign In to FeastFlow'; btn.disabled = false; }
+  }
+
+  // Redirect if already logged in
+  const existing = sessionStorage.getItem('ff_session');
+  if (existing) {
+    const s = JSON.parse(existing);
+    if (s.loggedIn) window.location.href = s.role === 'admin' ? 'admin.html' : 'client.html';
+  }
+</script>
+</body>
+</html>
