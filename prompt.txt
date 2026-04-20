@@ -1,0 +1,51 @@
+Create a complete Online Food Ordering System with both frontend and backend functionalities. The system should include user roles (Customer, Admin, Restaurant Owner) and must support the following:
+
+1. Customer Features:
+
+* User registration and login
+* Browse restaurants and food menus
+* Search and filter food items
+* Add to cart and manage cart
+* Place orders (Cash on Delivery / Online Payment)
+* Track order status (Pending, Preparing, Out for Delivery, Delivered)
+* View order history
+* Leave ratings and reviews
+
+1. Restaurant Owner Features:
+
+* Add and manage restaurant profile
+* Add, edit, and delete food menu items
+* Manage incoming orders
+* Update order status
+* View sales and reports
+
+1. Admin Features:
+
+* Manage users and restaurants
+* Approve or reject restaurant registrations
+* View all orders in the system
+* Generate reports and analytics
+* Manage promotions, discounts, and banners
+
+1. System Functionalities:
+
+* Responsive UI design
+* Secure authentication system
+* Database integration (MySQL)
+* REST API for communication
+* Payment gateway integration
+* Notification system (email or SMS)
+
+1. Technical Requirements:
+
+* Frontend: HTML, CSS, JavaScript
+* Backend: PHP (or Flask if preferred)
+* Database: MySQL
+Generate:
+
+* System architecture
+* Database tables
+* Sample code snippets
+* UI suggestions
+
+make a clean arrangement of the code
